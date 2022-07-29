@@ -33,7 +33,7 @@ x_updated.shape
 #Determine the target
 np.unique(y)
 pd.Series(y).value_counts()
-
+.
 
 #Visualize Data
 img_size = 200
