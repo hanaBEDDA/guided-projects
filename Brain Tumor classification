@@ -1,0 +1,89 @@
+#import package 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot  as plt
+from sklearn.model_selection import train_test_split
+import os 
+import cv2
+
+#Load data
+os.getcwd()
+
+os.chdir('Desktop')
+path = os.listdir('datasets')
+classes = {'no':0,'yes':1}
+x=[]
+y=[]
+for cls in classes:
+     pth ='datasets'
+     for j in os.listdir(pth):
+         img = cv2.imread(pth+'/'+j,0)
+         x.append(img)
+         y.append(classes[cls])
+ 
+ x = np.array(x)
+ y = np.array(y)
+ 
+x_updated = x.reshape(len(x),-1)
+x_updated
+
+x.shape
+x_updated.shape
+
+#Determine the target
+np.unique(y)
+pd.Series(y).value_counts()
+
+
+#Visualize Data
+img_size = 200
+
+img1 = cv2.resize(x[0], (img_size,img_size))
+plt.imshow(img1, cmap = 'gray')
+plt.show()
+
+img1 = cv2.resize(x[1], (img_size,img_size))
+plt.imshow(img1, cmap = 'gray')
+plt.show()
+
+#Split data into training and testing sats
+x_train, x_test, y_train, y_test = train_test_split(x_updated, y, test_size=.20)
+print(x_train.shape)
+print(y_train.shape)
+print(x_test.shape)
+print(y_test.shape)
+
+#Import the model
+# we will use Support vector machine model
+
+from sklearn import svm
+# create a svm classifier
+
+clf = svm.SVC(kernel = 'linear',gamma=0.01,C=1000)
+clf.fit(x_train,y_train)
+
+#Make predictions
+y_pred = clf.predict(x_test)
+print(y_pred)
+
+#showing training data
+plt.scatter(x_train[:,0],x_train[:,1], c=y_train,cmap= 'winter')
+
+#showing testing data
+plt.scatter(x_test[:,0],x_test[:,1],c=y_pred,cmap= 'winter')
+
+#showing the result of SVM
+ax = plt.gca()
+ax.scatter(x_test[:,0],x_test[:,1], c=y_test,cmap= 'winter', marker ='s')
+
+xlim = ax.get_xlim()
+
+w = clf.coef_[0]
+a = -w[0] / w[1]
+xx = np.linspace(xlim[0], xlim[1])
+yy = a * xx -(clf.intercept_[0] / w[1])
+plt.plot(xx, yy)
+plt.show()
+
+
+
